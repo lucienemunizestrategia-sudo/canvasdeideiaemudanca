@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas de Ideias e Mudanca - Eixo 5 - Exemplo Preenchido</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --azul-principal: #092040;
+    --azul-sec: #00B7D7;
+    --amarelo: #ECC203;
+    --cinza: #EFF1F3;
+    --azul-escuro: #021738;
+    --branco: #FFFFFF;
+  }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--cinza);
+    color: var(--azul-escuro);
+    padding: 24px;
+  }
+
+  .canvas-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--branco);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(9, 32, 64, 0.12);
+  }
+
+  .canvas-header {
+    background: var(--azul-principal);
+    padding: 28px 36px;
+    border-bottom: 4px solid var(--amarelo);
+  }
+
+  .canvas-header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--branco);
+    margin-bottom: 4px;
+  }
+
+  .canvas-header p {
+    font-size: 14px;
+    color: var(--azul-sec);
+    margin-top: 4px;
+  }
+
+  .canvas-meta {
+    display: flex;
+    gap: 40px;
+    padding: 16px 36px;
+    background: var(--cinza);
+    border-bottom: 1px solid #dde0e4;
+  }
+
+  .canvas-meta div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .canvas-meta label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--azul-sec);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .canvas-meta span {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--azul-principal);
+  }
+
+  .canvas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0;
+  }
+
+  .canvas-cell {
+    padding: 20px 28px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    min-height: 140px;
+  }
+
+  .canvas-cell:nth-child(even) {
+    border-right: none;
+  }
+
+  .cell-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .cell-number {
+    width: 28px;
+    height: 28px;
+    background: var(--azul-principal);
+    color: var(--amarelo);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .cell-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--azul-principal);
+  }
+
+  .cell-question {
+    font-size: 12px;
+    color: var(--azul-sec);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .cell-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+  }
+
+  .canvas-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .bottom-cell {
+    padding: 16px 28px;
+    border-top: 3px solid var(--amarelo);
+    background: #fefce8;
+  }
+
+  .bottom-cell:first-child {
+    border-right: 1px solid #e5e7eb;
+  }
+
+  .bottom-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--azul-principal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .bottom-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--azul-principal);
+    line-height: 1.5;
+  }
+
+  .canvas-footer {
+    padding: 16px 36px;
+    background: var(--azul-escuro);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .canvas-footer span {
+    font-size: 12px;
+    color: var(--azul-sec);
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--azul-sec);
+    color: var(--branco);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .print-note {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    padding: 16px 24px;
+    background: var(--branco);
+    border-left: 4px solid var(--azul-sec);
+    border-radius: 4px;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  @media print {
+    body { padding: 0; background: white; }
+    .canvas-container { box-shadow: none; }
+    .print-note { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="canvas-container">
+  <div class="canvas-header">
+    <p>Forum Brasil Criativo 2026 - Oficina Participativa</p>
+    <h1>Canvas de Ideias e Mudanca</h1>
+    <p>Dinamica de Grupo - Tanque de Ideias - Exemplo de Preenchimento (Eixo 5)</p>
+  </div>
+
+  <div class="canvas-meta">
+    <div>
+      <label>Tema do Desafio</label>
+      <span>Inovacao, Tecnologia e Infraestrutura</span>
+    </div>
+    <div>
+      <label>Grupo / Territorio</label>
+      <span>Exemplo de referencia para facilitacao</span>
+    </div>
+    <div>
+      <label>Eixo</label>
+      <span><span class="badge">Eixo 5</span></span>
+    </div>
+  </div>
+
+  <div class="canvas-grid">
+    <div class="canvas-cell">
+      <div class="cell-header">
+        <div class="cell-number">1</div>
+        <div class="cell-title">Problema / Desafio</div>
+      </div>
+      <div class="cell-question">O que precisa mudar?</div>
+      <div class="cell-content">
+        Empreendedores criativos de territorios perifericos nao tem acesso a ferramentas tecnologicas de producao, gestao e distribuicao de seus produtos e servicos culturais. Operam com processos manuais que limitam crescimento e competitividade no mercado digital.
+      </div>
+    </div>
+
+    <div class="canvas-cell">
+      <div class="cell-header">
+        <div class="cell-number">2</div>
+        <div class="cell-title">Ideia Principal</div>
+      </div>
+      <div class="cell-question">Qual solucao o grupo propoe?</div>
+      <div class="cell-content">
+        Criar uma rede de Laboratorios de Inovacao Criativa (LabCria) em espacos culturais publicos de territorios populares, equipados com tecnologia de producao digital, ferramentas de IA e programas de capacitacao continuada para empreendedores do setor criativo.
+      </div>
+    </div>
+
+    <div class="canvas-cell">
+      <div class="cell-header">
+        <div class="cell-number">3</div>
+        <div class="cell-title">Como Fazer (Acoes)</div>
+      </div>
+      <div class="cell-question">Principais acoes</div>
+      <div class="cell-content">
+        Firmar parcerias entre prefeituras e instituicoes de ensino para instalacao dos laboratorios. Desenvolver programa de formacao em ferramentas digitais por segmento criativo. Criar plataforma digital integrada para distribuicao de produtos culturais. Estabelecer programa de mentoria tecnologica com profissionais do setor.
+      </div>
+    </div>
+
+    <div class="canvas-cell">
+      <div class="cell-header">
+        <div class="cell-number">4</div>
+        <div class="cell-title">Quem Participa</div>
+      </div>
+      <div class="cell-question">Quem precisa estar envolvido?</div>
+      <div class="cell-content">
+        Governo federal (MinC, MCTI), governos estaduais e municipais, SEBRAE, universidades, organizacoes culturais locais, coletivos criativos, empresas de tecnologia (via responsabilidade social), e os proprios empreendedores criativos dos territorios como protagonistas do processo.
+      </div>
+    </div>
+
+    <div class="canvas-cell">
+      <div class="cell-header">
+        <div class="cell-number">5</div>
+        <div class="cell-title">Resultados Esperados</div>
+      </div>
+      <div class="cell-question">O que esperamos alcancar?</div>
+      <div class="cell-content">
+        500 empreendedores criativos capacitados por laboratorio/ano. Aumento de 40% na produtividade dos negocios criativos atendidos. Criacao de pelo menos 100 novos produtos culturais digitais por territorio. Reducao de 60% nos custos de producao para empreendedores atendidos.
+      </div>
+    </div>
+
+    <div class="canvas-cell">
+      <div class="cell-header">
+        <div class="cell-number">6</div>
+        <div class="cell-title">Impacto / Mudanca</div>
+      </div>
+      <div class="cell-question">Que transformacao essa ideia pode gerar?</div>
+      <div class="cell-content">
+        Democratizacao do acesso a tecnologia de producao cultural. Fortalecimento da economia criativa em territorios historicamente excluidos da inovacao. Modelo replicavel para todo o Brasil, conectando producao cultural local com mercados nacionais e internacionais.
+      </div>
+    </div>
+  </div>
+
+  <div class="canvas-bottom">
+    <div class="bottom-cell">
+      <div class="bottom-label">Nome da Ideia</div>
+      <div class="bottom-value">LabCria - Laboratorios de Inovacao Criativa Territorial</div>
+    </div>
+    <div class="bottom-cell">
+      <div class="bottom-label">Frase de Apresentacao (Pitch)</div>
+      <div class="bottom-value">Rede nacional de laboratorios de inovacao em espacos culturais publicos, equipando empreendedores criativos de territorios populares com tecnologia, IA e capacitacao para competir no mercado digital.</div>
+    </div>
+  </div>
+
+  <div class="canvas-footer">
+    <span>Forum Brasil Criativo 2026 - Oficina Eixo 5 - Rio de Janeiro</span>
+    <span>14 de abril de 2026 | 15h - 17h</span>
+  </div>
+</div>
+
+<div class="print-note">
+  Este canvas preenchido serve como exemplo de referencia para a facilitadora. Durante a oficina, cada grupo recebera um canvas em branco para preenchimento coletivo conforme a metodologia do Forum Brasil Criativo.
+</div>
+
+</body>
+</html>
